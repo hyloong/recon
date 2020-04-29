@@ -335,7 +335,7 @@ average_block_sizes(Keyword) ->
 %% larger than the `sbct', it gets sent to a single block carrier. When the
 %% data is smaller than the `sbct', it gets placed into a multiblock carrier.
 %%
-%% mbcs are to be prefered to sbcs because they basically represent pre-
+%% mbcs are to be preferred to sbcs because they basically represent pre-
 %% allocated memory, whereas sbcs will map to one call to sys_alloc
 %% or mseg_alloc, which is more expensive than redistributing
 %% data that was obtained for multiblock carriers. Moreover, the VM is able to
@@ -420,6 +420,9 @@ merge_values([{Key,Vs}|T1], [{Key,OVs}|T2]) when Key =:= calls;
                    %% value is very rarely important so leave it
                    %% like this for now.
                    {K, lists:max([V1,V2])};
+              ({{K,V1}, {K,V2}}) when K =:= foreign_blocks ->
+                   %% foreign blocks are just merged as a bigger list.
+                   {K, V1++V2};
               ({{K,V1}, {K,V2}}) ->
                    {K, V1 + V2};
               ({{K,C1,L1,M1}, {K,C2,L2,M2}}) ->
